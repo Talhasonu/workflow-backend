@@ -32,6 +32,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
+// normalize duplicate slashes in request paths
+app.use((req, res, next) => {
+  req.url = req.url.replace(/\/\/{2,}/g, "/");
+  next();
+});
+
 // serve static files
 app.use(express.static("public"));
 
