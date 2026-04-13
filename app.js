@@ -20,6 +20,9 @@ app.use(
 );
 app.options("*", cors());
 
+// serve static files
+app.use(express.static("public"));
+
 // parse json request body
 app.use(express.json());
 
