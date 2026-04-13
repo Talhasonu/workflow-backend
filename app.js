@@ -1,17 +1,24 @@
-const express = require('express');
-const passport = require('passport');
-const { jwtStrategy } = require('./src/config/passport');
-const cors = require('cors');
-const registerRoutes = require('./src/routes/app.routes');
+const express = require("express");
+const passport = require("passport");
+const { jwtStrategy } = require("./src/config/passport");
+const cors = require("cors");
+const registerRoutes = require("./src/routes/app.routes");
+const config = require("./src/config/config");
 
 const app = express();
 
 // enable cors
-app.use(cors({
-  origin: "http://localhost:3000", // your Next.js frontend URL
-  credentials: true
-}));
-app.options('*', cors());
+const allowedOrigins = ["http://localhost:3000", config.Frontend_URL].filter(
+  Boolean,
+); // filter out undefined if config.Frontend_URL is not set
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
+app.options("*", cors());
 
 // parse json request body
 app.use(express.json());
@@ -23,8 +30,6 @@ registerRoutes(app);
 
 // jwt authentication
 app.use(passport.initialize());
-passport.use('jwt', jwtStrategy);
-
-
+passport.use("jwt", jwtStrategy);
 
 module.exports = app;
