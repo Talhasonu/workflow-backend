@@ -3,13 +3,24 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const normalizeUrl = (value) => {
-  if (typeof value !== "string") return value;
-  return value.trim().replace(/\/+$|\s+$/g, "");
+  if (typeof value !== "string") return undefined;
+  return value.trim().replace(/\s+$/g, "").replace(/\/+$/g, "");
+};
+
+const parseUrls = (value) => {
+  if (!value || typeof value !== "string") return [];
+  return value
+    .split(",")
+    .map((item) => normalizeUrl(item))
+    .filter(Boolean);
 };
 
 module.exports = {
   port: process.env.PORT,
   Frontend_URL: normalizeUrl(process.env.FRONTEND_BASE_URL),
+  Frontend_URLs: parseUrls(
+    process.env.FRONTEND_BASE_URLS || process.env.FRONTEND_BASE_URL,
+  ),
   secrets: {
     jwtSecretKey: process.env.JWT_SECRET,
     jwtTokenExp: process.env.JWT_TOKEN_EXPIRE,

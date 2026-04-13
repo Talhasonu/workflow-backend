@@ -5,9 +5,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const allowedOrigins = [
-  "http://localhost:3000",                 
-   config.Frontend_URL, 
-];
+  "http://localhost:3000",
+  ...(config.Frontend_URLs || []),
+].filter(Boolean);
 
 // Create HTTP server
 const server = http.createServer(app);
@@ -52,7 +52,7 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = {  
+module.exports = {
   server,
   io,
 };

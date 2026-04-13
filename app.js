@@ -8,17 +8,29 @@ const config = require("./src/config/config");
 const app = express();
 
 // enable cors
-const allowedOrigins = ["http://localhost:3000", config.Frontend_URL].filter(
-  Boolean,
-); // filter out undefined if config.Frontend_URL is not set
+const allowedOrigins = [
+  "http://localhost:3000",
+  ...(config.Frontend_URLs || []),
+].filter(Boolean);
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  }),
-);
-app.options("*", cors());
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true); // allow server-to-server or tools without Origin header
+    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.warn(
+      `CORS rejected origin: ${origin}. Allowed: ${allowedOrigins.join(", ")}`,
+    );
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // serve static files
 app.use(express.static("public"));
