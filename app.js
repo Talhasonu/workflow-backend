@@ -48,10 +48,35 @@ app.use(express.json());
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-registerRoutes(app);
-
 // jwt authentication
 app.use(passport.initialize());
 passport.use("jwt", jwtStrategy);
+
+// root health endpoint for deployment checks
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "Workflow backend is running",
+  });
+});
+
+registerRoutes(app);
+
+// catch unmatched routes
+app.use((req, res) => {
+  res.status(404).json({
+    status: "error",
+    message: `Route ${req.originalUrl} not found`,
+  });
+});
+
+// global error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    status: "error",
+    message: err.message || "Internal Server Error",
+  });
+});
 
 module.exports = app;
