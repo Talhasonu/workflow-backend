@@ -15,18 +15,7 @@ const allowedOrigins = [
 ].filter(Boolean);
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) {
-      return callback(null, true); // allow server-to-server or tools without Origin header
-    }
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    console.warn(
-      `CORS rejected origin: ${origin}. Allowed: ${allowedOrigins.join(", ")}`,
-    );
-    return callback(new Error(`Origin ${origin} not allowed by CORS`));
-  },
+  origin: true, // allow any origin and echo it back
   credentials: true,
 };
 
