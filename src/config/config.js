@@ -4,7 +4,11 @@ dotenv.config();
 
 const normalizeUrl = (value) => {
   if (typeof value !== "string") return undefined;
-  return value.trim().replace(/\s+$/g, "").replace(/\/+$/g, "");
+  return value
+    .trim()
+    .replace(/\s+$/g, "")
+    .replace(/\/+$/g, "")
+    .replace(/\/\/+/g, "/");
 };
 
 const parseUrls = (value) => {
@@ -18,6 +22,7 @@ const parseUrls = (value) => {
 module.exports = {
   port: process.env.PORT,
   Frontend_URL: normalizeUrl(process.env.FRONTEND_BASE_URL),
+  backendUrl: normalizeUrl(process.env.BACKEND_BASE_URL),
   Frontend_URLs: parseUrls(
     process.env.FRONTEND_BASE_URLS || process.env.FRONTEND_BASE_URL,
   ),
